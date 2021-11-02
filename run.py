@@ -37,19 +37,27 @@ for exchange in exchanges:
 
     print(exchange.name)
 
+    try:
+        if exchange.sandbox:
+            print('Set sandbox: {}'.format(exchange.sandbox))
+            exchange.set_sandbox_mode(exchange.sandbox)
+    except:
+        pass
+
     symbol = None
     if exchange.name.find('Coinbase') >= 0:
         symbol = 'BTC/USD'
         exchange.set_sandbox_mode(True)
 
-    print(exchange.requiredCredentials)  # prints required credentials
+    #print(exchange.requiredCredentials)  # prints required credentials
     exchange.checkRequiredCredentials()  # raises AuthenticationError
 
     try:
         balance = exchange.fetch_balance()
-        print(json.dumps(balance, indent=3, sort_keys=True))
+        #print(json.dumps(balance, indent=3, sort_keys=True))
     except Exception as exception:
         logging.exception(exchange.name)
+        print('Error, see log.txt')
         continue
 
     while True:
@@ -75,4 +83,7 @@ for exchange in exchanges:
         data.append(trade['side'])
         writer.writerow(data)
 
+    print('OK')
+
 f.close()
+print('Done, see export.csv')
