@@ -4,7 +4,7 @@ import os
 import sys
 root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(root + '/python')
-sys.tracebacklimit = 0
+#sys.tracebacklimit = 0
 
 import ccxt
 import json
@@ -45,9 +45,16 @@ for exchange in exchanges:
     except:
         pass
 
-    symbol = None
+    symbols = []
     if exchange.name.find('Coinbase') >= 0:
-        symbol = 'BTC/USD'
+        #symbol = 'BTC/USD'
+        markets = exchange.load_markets()
+        symbols.extend(markets)
+        #print(json.dumps(markets, indent=3, sort_keys=True))
+        #for market in markets:
+        #    print(market)
+    else:
+        symbols.append(None)
 
     #print(exchange.requiredCredentials)  # prints required credentials
     exchange.checkRequiredCredentials()  # raises AuthenticationError
@@ -60,21 +67,21 @@ for exchange in exchanges:
         logging.error(repr(exception))
         logging.exception(exception)
         print(repr(exception))
-        #logging.exception(exception)
         print('ERROR')
         continue
 
-    while True:
+    for symbol in symbols:
+        while True:
+            print(symbol)
+            myTrades = exchange.fetch_my_trades(symbol=symbol, since=None, params={param_key: param_value})
 
-        myTrades = exchange.fetch_my_trades(symbol=symbol, since=None, params={param_key: param_value})
-
-        if exchange.last_response_headers._store.get('cb-after'):
-            param_key = 'after'
-            param_value = exchange.last_response_headers._store['cb-after'][1]
-            allMyTrades.extend(myTrades)
-        else:
-            allMyTrades.extend(myTrades)
-            break
+            if exchange.last_response_headers._store.get('cb-after'):
+                param_key = 'after'
+                param_value = exchange.last_response_headers._store['cb-after'][1]
+                allMyTrades.extend(myTrades)
+            else:
+                allMyTrades.extend(myTrades)
+                break
 
     for trade in allMyTrades:
         #print(json.dumps(trade, indent=3, sort_keys=True))
