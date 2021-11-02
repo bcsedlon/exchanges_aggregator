@@ -13,11 +13,11 @@ import logging
 logging.basicConfig(handlers=[logging.FileHandler(filename="log.txt", encoding='utf-8', mode='w')],
         format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s', datefmt='%H:%M:%S', level=logging.ERROR)
 
-try:
-    from exchanges_private import exchanges
-except:
+if not os.path.exists('exchanges_private.py'):
     print('Rename exchanges_example.py to exchanges_private.py and fill credentials!')
     exit()
+
+from exchanges_private import exchanges
 
 #from exchanges_example import exchanges
 
