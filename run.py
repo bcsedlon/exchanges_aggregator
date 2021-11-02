@@ -48,7 +48,6 @@ for exchange in exchanges:
     symbol = None
     if exchange.name.find('Coinbase') >= 0:
         symbol = 'BTC/USD'
-        exchange.set_sandbox_mode(True)
 
     #print(exchange.requiredCredentials)  # prints required credentials
     exchange.checkRequiredCredentials()  # raises AuthenticationError
