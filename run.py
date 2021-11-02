@@ -4,6 +4,7 @@ import os
 import sys
 root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(root + '/python')
+sys.tracebacklimit = 0
 
 import ccxt
 import json
@@ -56,8 +57,12 @@ for exchange in exchanges:
         balance = exchange.fetch_balance()
         #print(json.dumps(balance, indent=3, sort_keys=True))
     except Exception as exception:
-        logging.exception(exchange.name)
-        print('Error, see log.txt')
+        logging.error(exchange.name, )
+        logging.error(repr(exception))
+        logging.exception(exception)
+        print(repr(exception))
+        #logging.exception(exception)
+        print('Error')
         continue
 
     while True:
