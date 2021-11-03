@@ -83,6 +83,7 @@ def main(argv):
     for exchange in exchanges:
         allMyTrades = []
 
+        print()
         print(exchange.name)
 
         try:
@@ -93,23 +94,26 @@ def main(argv):
             pass
 
         symbols = []
-        if exchange.name.find('Coinbase') >= 0:
+        if exchange.name.find('Coinbase') >= 0 or exchange.name.find('Binance') >= 0:
             # symbol = 'BTC/USD'
             markets = exchange.load_markets()
-            symbols.extend(markets)
-            # print(json.dumps(markets, indent=3, sort_keys=True))
-            #for market in markets:
-            #   print(market)
+            #symbols.extend(markets)
+            #print(json.dumps(markets, indent=3, sort_keys=True))
+            for market in markets:
+                #if market.find('BTC') >= 0:
+                    #print(market)
+                    symbols.append(market)
         else:
             symbols.append(None)
+        #exit()
 
-        params = {param_key: param_value}
+        params = {} #{param_key: param_value}
         if exchange.name.find('Huobi') >= 0:
             #dateTo = ccxt.huobi.parse8601(dateTo)  # +2 days allowed range
             param = {
                 'end-date': dateTo  # yyyy-mm-dd format
             }
-            params.update(param)
+            markets = exchange.load_markets()
 
         #print(exchange.requiredCredentials)  # prints required credentials
         exchange.checkRequiredCredentials()  # raises AuthenticationError
@@ -127,8 +131,9 @@ def main(argv):
 
         for symbol in symbols:
             while True:
-                #if symbol != None:
-                #    print(symbol)
+                if symbol != None:
+                    print(symbol)
+                #print(params)
 
                 myTrades = exchange.fetch_my_trades(symbol=symbol, since=dateFrom, params=params)  #{param_key: param_value})
                 #if len(myTrades) == 0:
@@ -166,7 +171,7 @@ def main(argv):
         print('OK')
 
     f.close()
-    print('Done, see {}'.format(outputFileName))
+    print('\nDone, see {}'.format(outputFileName))
 
 
 if __name__ == "__main__":
